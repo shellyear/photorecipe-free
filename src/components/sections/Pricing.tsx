@@ -19,6 +19,7 @@ const basicFeatures = [
 ];
 
 const premiumFeatures = [
+  { text: "Ads free", available: true },
   { text: "Upload a dish photo for an instant recipe", available: true },
   {
     text: "Upload ingredient photos to generate possible recipes instantly. Type missing ingredients to complete your recipe search",
@@ -41,17 +42,8 @@ const Pricing = () => {
                   <p className="text-lg lg:text-xl font-bold ">Starter</p>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <div className="flex flex-col justify-end mb-[4px] text-lg ">
-                  <p className="relative opacity-80">
-                    <span className="absolute bg-base-content h-[1.5px] inset-x-0 top-[48%]"></span>
-                    <span className="text-base-content">$19.99</span>
-                  </p>
-                </div>
-                <p className="text-5xl tracking-tight font-extrabold">$14.99</p>
-                <div className="flex flex-col justify-end mb-[4px]">
-                  <span className="text-xs font-semibold">/year</span>
-                </div>
+              <div>
+                <p className="text-5xl tracking-tight font-extrabold">Free</p>
               </div>
               <ul className="space-y-2.5 leading-relaxed text-base flex-1">
                 {basicFeatures.map((feature, i) => (
@@ -103,9 +95,6 @@ const Pricing = () => {
                   </p>
                 </div>
                 <p className="text-5xl tracking-tight font-extrabold">$19.99</p>
-                <div className="flex flex-col justify-end mb-[4px]">
-                  <span className="text-xs font-semibold">/year</span>
-                </div>
               </div>
               <ul className="space-y-2.5 leading-relaxed text-base flex-1">
                 {premiumFeatures.map((feature, i) => (
@@ -131,7 +120,7 @@ const Pricing = () => {
                   Get PhotoRecipe
                 </button>
                 <p className="flex items-center justify-center gap-2 text-sm text-center text-base-content/80 font-medium relative">
-                  Cook like a pro with our Premium Plan!
+                  Pay once. Discover recipes forever!
                 </p>
               </div>
             </div>
