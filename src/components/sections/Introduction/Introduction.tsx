@@ -9,7 +9,7 @@ const Introduction = () => {
         <div className="px-4 py-6 sm:px-0">
           <div className="text-center">
             <h1 className="text-5xl font-bold leading-normal">
-              Get Recipes from Food Photos{" "}
+              Free Recipes from Food Photos{" "}
               <span className="relative whitespace-nowrap">
                 <span className="absolute bg-neutral-content -left-2 -top-1 -bottom-1 -right-2 md:-left-3 md:-top-0 md:-bottom-0 md:-right-3 -rotate-1"></span>
                 <span className="relative text-mandy">Instantly</span>

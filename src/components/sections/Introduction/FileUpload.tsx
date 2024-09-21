@@ -2,12 +2,21 @@ import React, { useRef, useState } from "react";
 import Image from "next/image";
 import ChefHat from "../../icons/ChefHat";
 import Upload from "../../icons/Upload";
+import IngredientsOptions, { useIngredientOptions } from "./IngredientsOptions";
+
+enum RecipeChoice {
+  DISH = "dish",
+  INGREDIENTS = "ingredients",
+}
 
 const FileUpload = () => {
+  const ingredientOptionsProps = useIngredientOptions();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [image, setImage] = useState<string | null>(null);
   const [recipe, setRecipe] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [choice, setChoice] = useState(RecipeChoice.DISH);
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -77,6 +86,40 @@ const FileUpload = () => {
           />
         </div>
       </div>
+
+      {/* Dish and Ingredients radio group */}
+      <div className="mt-2">
+        <p className="text-md text-center font-medium text-gray-700 mb-2">
+          Provide me recipe for:
+        </p>
+        <div className="mb-4 flex gap-6 items-center justify-center">
+          <label className="flex items-center">
+            <input
+              type="radio"
+              value={RecipeChoice.DISH}
+              checked={choice === RecipeChoice.DISH}
+              onChange={() => setChoice(RecipeChoice.DISH)}
+              className="mr-2"
+            />
+            Dish
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              value={RecipeChoice.INGREDIENTS}
+              checked={choice === RecipeChoice.INGREDIENTS}
+              onChange={() => setChoice(RecipeChoice.INGREDIENTS)}
+              className="mr-2"
+            />
+            Ingredients
+          </label>
+        </div>
+      </div>
+
+      {choice === RecipeChoice.INGREDIENTS && (
+        <IngredientsOptions {...ingredientOptionsProps} />
+      )}
+
       <div className="mt-5 text-center">
         <button
           disabled={loading}
@@ -84,7 +127,7 @@ const FileUpload = () => {
           className="btn bg-mandy btn-wide text-white font-bold mt-4 hover:bg-mandydark"
         >
           <ChefHat w={22} h={22} />
-          Get started
+          Get Recipe
         </button>
       </div>
     </div>
