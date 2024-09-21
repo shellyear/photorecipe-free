@@ -1,7 +1,7 @@
 import Logo from "@/components/Logo";
 import Container from "@/components/Container";
 import HowItWorks from "@/components/sections/HowItWorks";
-import Introduction from "@/components/sections/Introduction";
+import Introduction from "@/components/sections/Introduction/Introduction";
 import Link from "next/link";
 import SingleReview from "@/components/sections/SingleReview";
 import Pricing from "@/components/sections/Pricing";
@@ -10,13 +10,14 @@ import FAQ from "@/components/sections/FAQ";
 import CallToAction from "@/components/sections/CallToAction";
 import Footer from "@/components/sections/Footer";
 import SignInButton from "@/components/buttons/SigninButton";
+import RecipeSection from "@/components/sections/RecipeSection";
 
 export default function Home() {
   return (
     <>
-      <header>
+      <header className="mb-2 md:mb-6">
         <Container>
-          <div className="mb-6 flex justify-between gap-4 md:mb-16">
+          <div className="flex justify-between gap-4">
             <Logo />
             <div className="hidden flex-1 items-center gap-12 px-16 md:inline-flex">
               <a href="#pricing">Pricing</a>
@@ -28,6 +29,7 @@ export default function Home() {
       </header>
       <main>
         <Introduction />
+        <RecipeSection />
         <HowItWorks />
         <SingleReview
           className="bg-mandylight"
