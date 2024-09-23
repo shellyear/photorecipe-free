@@ -4,7 +4,7 @@ import ChefHat from "../../icons/ChefHat";
 import Upload from "../../icons/Upload";
 import IngredientsOptions, { useIngredientOptions } from "./IngredientsOptions";
 
-enum RecipeChoice {
+export enum RecipeChoice {
   DISH = "dish",
   INGREDIENTS = "ingredients",
 }
@@ -14,9 +14,12 @@ const FileUpload = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [image, setImage] = useState<string | null>(null);
-  const [recipe, setRecipe] = useState<string | null>(null);
+  const [recipeChoice, setRecipeChoice] = useState(RecipeChoice.DISH);
   const [loading, setLoading] = useState(false);
-  const [choice, setChoice] = useState(RecipeChoice.DISH);
+
+  const [recipeText, setRecipeText] = useState("");
+
+  const [error, setError] = useState("");
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -34,10 +37,25 @@ const FileUpload = () => {
   };
 
   const handleGetRecipe = async () => {
+    setError("");
     setLoading(true);
-    // Simulating API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setRecipe(
+
+    const res = await fetch("/api/recipe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        image,
+        recipeChoice,
+        skillLevel: ingredientOptionsProps.skillLevel,
+        timeConstraint: ingredientOptionsProps.timeConstraint,
+        dietaryRestrictions: ingredientOptionsProps.dietaryRestrictions,
+      }),
+    });
+    const data = await res.json();
+    console.log({ data });
+    setRecipeText(
       "Delicious Pasta\n\nIngredients:\n- 200g pasta\n- 2 tbsp olive oil\n- 2 cloves garlic\n- 1 can diced tomatoes\n- Salt and pepper to taste\n- Fresh basil\n\nInstructions:\n1. Cook pasta according to package instructions.\n2. In a pan, heat olive oil and sauté garlic.\n3. Add diced tomatoes and simmer for 10 minutes.\n4. Season with salt and pepper.\n5. Toss cooked pasta with the sauce.\n6. Garnish with fresh basil and serve."
     );
     setLoading(false);
@@ -73,7 +91,9 @@ const FileUpload = () => {
               </label>
               <p className="pl-1">or drag and drop</p>
             </div>
-            <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+            <p className="text-xs text-gray-500">
+              PNG, JPEG, GIF, WEBP up to 10MB
+            </p>
           </div>
           <input
             ref={fileInputRef}
@@ -97,8 +117,8 @@ const FileUpload = () => {
             <input
               type="radio"
               value={RecipeChoice.DISH}
-              checked={choice === RecipeChoice.DISH}
-              onChange={() => setChoice(RecipeChoice.DISH)}
+              checked={recipeChoice === RecipeChoice.DISH}
+              onChange={() => setRecipeChoice(RecipeChoice.DISH)}
               className="mr-2"
             />
             Dish
@@ -107,8 +127,8 @@ const FileUpload = () => {
             <input
               type="radio"
               value={RecipeChoice.INGREDIENTS}
-              checked={choice === RecipeChoice.INGREDIENTS}
-              onChange={() => setChoice(RecipeChoice.INGREDIENTS)}
+              checked={recipeChoice === RecipeChoice.INGREDIENTS}
+              onChange={() => setRecipeChoice(RecipeChoice.INGREDIENTS)}
               className="mr-2"
             />
             Ingredients
@@ -116,7 +136,7 @@ const FileUpload = () => {
         </div>
       </div>
 
-      {choice === RecipeChoice.INGREDIENTS && (
+      {recipeChoice === RecipeChoice.INGREDIENTS && (
         <IngredientsOptions {...ingredientOptionsProps} />
       )}
 

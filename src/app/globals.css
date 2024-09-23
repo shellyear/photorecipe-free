@@ -5,9 +5,9 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --mandy: #EC5564;
+  --mandy: #ec5564;
   --mandy-light: #feeef0;
-  --mandy-dark: #df4857; 
+  --mandy-dark: #df4857;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,11 +20,31 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif,
+    Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* CUSTOM STYLES */
+
+@keyframes jump {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+.jumping-button {
+  animation: jump 1s ease-in-out infinite;
+}
+.jumping-button:hover {
+  animation-play-state: paused;
 }

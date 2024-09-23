@@ -5,19 +5,21 @@ interface IngredientOptionsProps {
   skillLevel: SkillLevel;
   timeConstraint: TimeConstraint;
   dietaryRestrictions: string[];
+  missingIngredients: string;
   setSkillLevel: Dispatch<SetStateAction<SkillLevel>>;
   setTimeConstraint: Dispatch<SetStateAction<TimeConstraint>>;
   setDietaryRestrictions: Dispatch<SetStateAction<string[]>>;
+  setMissingIngredients: Dispatch<SetStateAction<string>>;
 }
 
-enum TimeConstraint {
+export enum TimeConstraint {
   HALF_HOUR = "30 minutes or less",
   HOUR = "1 hour or less",
   HOUR_AND_HALF = "1,5 hours or less",
   ANY = "any time",
 }
 
-enum SkillLevel {
+export enum SkillLevel {
   BEGINNER = "beginner",
   INTERMEDIATE = "intermediate",
   ADVANCED = "advanced",
@@ -37,14 +39,17 @@ export function useIngredientOptions() {
     TimeConstraint.HALF_HOUR
   );
   const [dietaryRestrictions, setDietaryRestrictions] = useState<string[]>([]);
+  const [missingIngredients, setMissingIngredients] = useState("");
 
   return {
     skillLevel,
     timeConstraint,
     dietaryRestrictions,
+    missingIngredients,
     setSkillLevel,
     setTimeConstraint,
     setDietaryRestrictions,
+    setMissingIngredients,
   };
 }
 
@@ -52,6 +57,8 @@ export default function IngredientsOptions({
   skillLevel,
   timeConstraint,
   dietaryRestrictions,
+  missingIngredients,
+  setMissingIngredients,
   setSkillLevel,
   setTimeConstraint,
   setDietaryRestrictions,
@@ -144,6 +151,23 @@ export default function IngredientsOptions({
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="flex-1 mt-4">
+        <label
+          htmlFor="missing-ingredient"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
+          Missing Ingredients
+        </label>
+        <input
+          type="text"
+          id="missing-ingredient"
+          className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          placeholder="Type missing ingredients here"
+          value={missingIngredients}
+          onChange={(e) => setMissingIngredients(e.target.value)}
+        />
       </div>
 
       <div className="mt-8 p-6 bg-gray-100 rounded-md">

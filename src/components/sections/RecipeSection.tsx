@@ -13,7 +13,7 @@ const RecipeSection = () => {
   };
 
   return (
-    <div className="mt-10">
+    <div className="mt-10 jumping-button jumping-button:hover">
       <Container>
         <button
           onClick={toggleRecipeExpansion}
