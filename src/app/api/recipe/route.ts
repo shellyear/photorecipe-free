@@ -4,13 +4,9 @@ import {
 } from "@/components/sections/Introduction/IngredientsOptions";
 import { RecipeChoice } from "@/types/enum";
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import axios from "axios";
 
 function getDishRecipePrompt() {
   return "Here is an image of a dish. Analyze it and provide a recipe.";
@@ -88,7 +84,7 @@ export async function POST(request: NextRequest) {
     missingIngredients,
   }: RequestBody = await request.json();
 
-  let promptText = getPrompt(recipeChoice, {
+  const promptText = getPrompt(recipeChoice, {
     skillLevel,
     timeConstraint,
     dietaryRestrictions,
@@ -96,7 +92,14 @@ export async function POST(request: NextRequest) {
   });
 
   try {
-    const response = await openai.chat.completions.create({
+    const url = "https://api.openai.com/v1/chat/completions";
+    const options = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+    };
+    const body = JSON.stringify({
       model: "gpt-4o-mini",
       messages: [
         {
@@ -113,10 +116,17 @@ export async function POST(request: NextRequest) {
           ],
         },
       ],
+      max_completion_tokens: 300,
+      /**
+       * How many chat completion choices to generate for each input message. Note that
+       * you will be charged based on the number of generated tokens across all of the
+       * choices. Keep `n` as `1` to minimize costs.
+       */
       response_format: zodResponseFormat(RecipeFormat, "recipe"),
     });
-    console.log("Token usage", response.usage);
-    return NextResponse.json(response.choices[0].message.content);
+    const response = await axios.post(url, body, options);
+    console.log("Token usage", response?.data.usage);
+    return NextResponse.json(response.data.choices[0].message.content);
   } catch (error) {
     console.error("Error fetching from OpenAI:", error);
     return NextResponse.json(

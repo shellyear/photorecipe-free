@@ -53,6 +53,7 @@ const FileUpload = ({
     setRecipeData(null);
 
     if (!image) {
+      setLoading(false)
       return setError("No image was uploaded");
     }
 
