@@ -1,8 +1,8 @@
-import { RecipeChoice } from "@/components/sections/Introduction/FileUpload";
 import {
   SkillLevel,
   TimeConstraint,
 } from "@/components/sections/Introduction/IngredientsOptions";
+import { RecipeChoice } from "@/types/enum";
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
@@ -11,27 +11,63 @@ const openai = new OpenAI({
 });
 
 function getDishRecipePrompt() {
-  return 'Here is an image of a dish. Analyze it and provide a recipe with the following structure as a response:\n{\n  "name": "Dish Name",\n  "ingredients": ["ingredient1", "ingredient2", "ingredient3"],\n  "instructions": ["step1", "step2", "step3"]\n}';
+  return 'Here is an image of a dish. Analyze it and provide a recipe.';
 }
 
 function getIngredientsRecipePrompt({
   skillLevel,
   timeConstraint,
   dietaryRestrictions,
-}: Pick<RequestBody, "skillLevel" | "timeConstraint" | "dietaryRestrictions">) {
-  return `Give me a recipe for the ingredients on the photo. Cooking time: ${timeConstraint}. Skill level: ${skillLevel}. ${
-    dietaryRestrictions.length &&
-    `Dietary restrictions: ${dietaryRestrictions
-      .map((restriction) => restriction)
-      .join(", ")}`
-  }`;
+  missingIngredients,
+}: Pick<
+  RequestBody,
+  "skillLevel" | "timeConstraint" | "dietaryRestrictions" | "missingIngredients"
+>) {
+  return `Give me a recipe for the ingredients on the photo. Missing ingredients on the photo: ${missingIngredients} Cooking time: ${timeConstraint}. Skill level: ${skillLevel}. ${
+    dietaryRestrictions?.length
+      ? `Dietary restrictions: ${dietaryRestrictions
+          .map((restriction) => restriction)
+          .join(", ")}`
+      : ""
+  }.`;
+}
+
+function getPrompt(
+  recipeChoice: RecipeChoice.DISH | RecipeChoice.INGREDIENTS,
+  recipeOptions: Pick<
+    RequestBody,
+    | "skillLevel"
+    | "timeConstraint"
+    | "dietaryRestrictions"
+    | "missingIngredients"
+  >
+) {
+  console.log({
+    recipeChoice,
+    dish: RecipeChoice.DISH,
+    ingredients: RecipeChoice.INGREDIENTS,
+    isDish: recipeChoice === RecipeChoice.DISH,
+    isIngredients: recipeChoice === RecipeChoice.INGREDIENTS,
+  });
+  if (recipeChoice === RecipeChoice.DISH) {
+    return getDishRecipePrompt();
+  }
+
+  if (recipeChoice === RecipeChoice.INGREDIENTS) {
+    return getIngredientsRecipePrompt({
+      ...recipeOptions,
+    });
+  }
+
+  return "";
 }
 interface RequestBody {
   image: Buffer;
   recipeChoice: RecipeChoice;
-  skillLevel: SkillLevel; // Adjust this type based on your skill levels (e.g., string, enum, etc.)
-  timeConstraint: TimeConstraint; // Assuming this is optional
-  dietaryRestrictions: string[]; // Assuming this is optional
+  skillLevel?: SkillLevel;
+  timeConstraint?: TimeConstraint;
+  dietaryRestrictions?: string[];
+  missingIngredients?: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -41,17 +77,15 @@ export async function POST(request: NextRequest) {
     skillLevel,
     timeConstraint,
     dietaryRestrictions,
-  } = await request.json();
+    missingIngredients,
+  }: RequestBody = await request.json();
 
-  let promptText = "";
-
-  if (recipeChoice === RecipeChoice.DISH) promptText = getDishRecipePrompt();
-  else if (recipeChoice === RecipeChoice.INGREDIENTS)
-    promptText = getIngredientsRecipePrompt({
-      skillLevel,
-      timeConstraint,
-      dietaryRestrictions,
-    });
+  let promptText = getPrompt(recipeChoice, {
+    skillLevel,
+    timeConstraint,
+    dietaryRestrictions,
+    missingIngredients,
+  });
 
   try {
     const response = await openai.chat.completions.create({
@@ -65,6 +99,7 @@ export async function POST(request: NextRequest) {
               type: "image_url",
               image_url: {
                 url: image,
+                detail: "low",
               },
             },
           ],
@@ -72,7 +107,7 @@ export async function POST(request: NextRequest) {
       ],
     });
 
-    return NextResponse.json(response);
+    return NextResponse.json(response.choices[0].message.content);
   } catch (error) {
     console.error("Error fetching from OpenAI:", error);
     return NextResponse.json(

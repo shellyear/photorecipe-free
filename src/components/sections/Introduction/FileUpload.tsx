@@ -1,13 +1,10 @@
+"use client";
 import React, { useRef, useState } from "react";
 import Image from "next/image";
 import ChefHat from "../../icons/ChefHat";
 import Upload from "../../icons/Upload";
 import IngredientsOptions, { useIngredientOptions } from "./IngredientsOptions";
-
-export enum RecipeChoice {
-  DISH = "dish",
-  INGREDIENTS = "ingredients",
-}
+import { RecipeChoice } from "@/types/enum";
 
 const FileUpload = () => {
   const ingredientOptionsProps = useIngredientOptions();
@@ -51,12 +48,12 @@ const FileUpload = () => {
         skillLevel: ingredientOptionsProps.skillLevel,
         timeConstraint: ingredientOptionsProps.timeConstraint,
         dietaryRestrictions: ingredientOptionsProps.dietaryRestrictions,
+        missingIngredients: ingredientOptionsProps.missingIngredients,
       }),
     });
     const data = await res.json();
-    console.log({ data });
     setRecipeText(
-      "Delicious Pasta\n\nIngredients:\n- 200g pasta\n- 2 tbsp olive oil\n- 2 cloves garlic\n- 1 can diced tomatoes\n- Salt and pepper to taste\n- Fresh basil\n\nInstructions:\n1. Cook pasta according to package instructions.\n2. In a pan, heat olive oil and sauté garlic.\n3. Add diced tomatoes and simmer for 10 minutes.\n4. Season with salt and pepper.\n5. Toss cooked pasta with the sauce.\n6. Garnish with fresh basil and serve."
+      data
     );
     setLoading(false);
   };

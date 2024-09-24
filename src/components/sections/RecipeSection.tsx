@@ -19,7 +19,7 @@ const RecipeSection = () => {
           onClick={toggleRecipeExpansion}
           className="w-full flex justify-between items-center px-4 py-2 text-left text-lg font-medium text-white bg-mandy hover:bg-mandydark focus:outline-none focus-visible:ring focus-visible:ring-indigo-500 focus-visible:ring-opacity-50 rounded"
         >
-          <span>Featured Recipe: Creamy Mushroom Risotto</span>
+          <span>Featured Recipe</span>
           {isRecipeExpanded ? (
             <ArrowUp className="h-5 w-5" fill="white" />
           ) : (
