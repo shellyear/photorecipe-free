@@ -10,7 +10,6 @@ import FAQ from "@/components/sections/FAQ";
 import CallToAction from "@/components/sections/CallToAction";
 import Footer from "@/components/sections/Footer";
 import SignInButton from "@/components/buttons/SigninButton";
-import RecipeSection from "@/components/sections/RecipeSection";
 
 export default function Home() {
   return (
@@ -29,7 +28,6 @@ export default function Home() {
       </header>
       <main>
         <Introduction />
-        <RecipeSection />
         <HowItWorks />
         <SingleReview
           className="bg-mandylight"

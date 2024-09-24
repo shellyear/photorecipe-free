@@ -1,6 +1,5 @@
-"use client";
 import Container from "../../Container";
-import FileUpload from "./FileUpload";
+import RecipeManager from "./RecipeManager";
 
 const Introduction = () => {
   return (
@@ -21,7 +20,7 @@ const Introduction = () => {
             </p>
           </div>
         </div>
-        <FileUpload />
+        <RecipeManager />
       </Container>
     </section>
   );

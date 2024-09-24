@@ -5,13 +5,15 @@ import {
 import { RecipeChoice } from "@/types/enum";
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import { zodResponseFormat } from "openai/helpers/zod";
+import { z } from 'zod'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 function getDishRecipePrompt() {
-  return 'Here is an image of a dish. Analyze it and provide a recipe.';
+  return "Here is an image of a dish. Analyze it and provide a recipe.";
 }
 
 function getIngredientsRecipePrompt({
@@ -70,6 +72,12 @@ interface RequestBody {
   missingIngredients?: string;
 }
 
+const RecipeFormat = z.object({
+  name: z.string(),
+  ingredients: z.array(z.string()),
+  instructions: z.array(z.string()),
+});
+
 export async function POST(request: NextRequest) {
   const {
     image,
@@ -105,6 +113,7 @@ export async function POST(request: NextRequest) {
           ],
         },
       ],
+      response_format: zodResponseFormat(RecipeFormat, 'recipe')
     });
 
     return NextResponse.json(response.choices[0].message.content);

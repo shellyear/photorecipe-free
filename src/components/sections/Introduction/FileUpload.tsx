@@ -1,20 +1,31 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import Image from "next/image";
 import ChefHat from "../../icons/ChefHat";
 import Upload from "../../icons/Upload";
 import IngredientsOptions, { useIngredientOptions } from "./IngredientsOptions";
 import { RecipeChoice } from "@/types/enum";
+import { RecipeData } from "@/types/recipe";
 
-const FileUpload = () => {
+interface FileUploadProps {
+  image: string | null;
+  loading: boolean;
+  setImage: Dispatch<SetStateAction<string | null>>;
+  setRecipeData: Dispatch<SetStateAction<RecipeData | null>>;
+  setLoading: Dispatch<SetStateAction<boolean>>;
+}
+
+const FileUpload = ({
+  image,
+  loading,
+  setImage,
+  setRecipeData,
+  setLoading,
+}: FileUploadProps) => {
   const ingredientOptionsProps = useIngredientOptions();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [image, setImage] = useState<string | null>(null);
   const [recipeChoice, setRecipeChoice] = useState(RecipeChoice.DISH);
-  const [loading, setLoading] = useState(false);
-
-  const [recipeText, setRecipeText] = useState("");
 
   const [error, setError] = useState("");
 
@@ -36,25 +47,32 @@ const FileUpload = () => {
   const handleGetRecipe = async () => {
     setError("");
     setLoading(true);
+    setRecipeData(null)
 
-    const res = await fetch("/api/recipe", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        image,
-        recipeChoice,
-        skillLevel: ingredientOptionsProps.skillLevel,
-        timeConstraint: ingredientOptionsProps.timeConstraint,
-        dietaryRestrictions: ingredientOptionsProps.dietaryRestrictions,
-        missingIngredients: ingredientOptionsProps.missingIngredients,
-      }),
-    });
-    const data = await res.json();
-    setRecipeText(
-      data
-    );
+    if (!image) {
+      return setError("No image was uploaded");
+    }
+
+    try {
+      const res = await fetch("/api/recipe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          image,
+          recipeChoice,
+          skillLevel: ingredientOptionsProps.skillLevel,
+          timeConstraint: ingredientOptionsProps.timeConstraint,
+          dietaryRestrictions: ingredientOptionsProps.dietaryRestrictions,
+          missingIngredients: ingredientOptionsProps.missingIngredients,
+        }),
+      });
+      const data = await res.json();
+      setRecipeData(JSON.parse(data));
+    } catch (error) {
+      setError("Error while fetching a recipe");
+    }
     setLoading(false);
   };
   return (
