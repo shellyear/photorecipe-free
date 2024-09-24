@@ -34,6 +34,9 @@ const FileUpload = ({
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError("");
+    setLoading(false);
+    setRecipeData(null);
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -47,7 +50,7 @@ const FileUpload = ({
   const handleGetRecipe = async () => {
     setError("");
     setLoading(true);
-    setRecipeData(null)
+    setRecipeData(null);
 
     if (!image) {
       return setError("No image was uploaded");
@@ -70,8 +73,9 @@ const FileUpload = ({
       });
       const data = await res.json();
       setRecipeData(JSON.parse(data));
-    } catch (error) {
-      setError("Error while fetching a recipe");
+    } catch (error: unknown) {
+      const { message } = error as Error;
+      setError(message);
     }
     setLoading(false);
   };
@@ -150,6 +154,8 @@ const FileUpload = ({
           </label>
         </div>
       </div>
+
+      {error && <div className="text-red-500 text-center">{error}</div>}
 
       {recipeChoice === RecipeChoice.INGREDIENTS && (
         <IngredientsOptions {...ingredientOptionsProps} />

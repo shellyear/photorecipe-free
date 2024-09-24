@@ -165,7 +165,7 @@ export default function IngredientsOptions({
           id="missing-ingredient"
           className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Type missing ingredients here"
-          maxLength={250}
+          maxLength={70}
           value={missingIngredients}
           onChange={(e) => setMissingIngredients(e.target.value)}
         />

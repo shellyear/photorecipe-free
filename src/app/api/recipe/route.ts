@@ -6,7 +6,7 @@ import { RecipeChoice } from "@/types/enum";
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
-import { z } from 'zod'
+import { z } from "zod";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -113,9 +113,9 @@ export async function POST(request: NextRequest) {
           ],
         },
       ],
-      response_format: zodResponseFormat(RecipeFormat, 'recipe')
+      response_format: zodResponseFormat(RecipeFormat, "recipe"),
     });
-
+    console.log("Token usage", response.usage);
     return NextResponse.json(response.choices[0].message.content);
   } catch (error) {
     console.error("Error fetching from OpenAI:", error);
