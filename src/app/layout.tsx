@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -52,7 +53,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title:
-      "PhotoRecipe - Recognize Dishes & Ingredients, Get Recipes Instantly",
+      "PhotoRecipe - Recognize Dishes & Ingredients from Photos, Get Recipes Instantly",
     description:
       "Take a photo of your dish or ingredients, and let PhotoRecipe find the perfect recipe for you. Get instant recipe recommendations and start cooking with ease.",
     url: "https://www.photorecipe.one",
@@ -88,6 +89,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
+      <GoogleAnalytics />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
